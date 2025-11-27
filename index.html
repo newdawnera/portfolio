@@ -3,9 +3,952 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Port Folio</title>
+    <title>Developer Portfolio</title>
+    <style>
+      /* --- CSS VARIABLES & RESET --- */
+      :root {
+        --bg-dark: #0a192f;
+        --bg-card: #112240;
+        --text-main: #ccd6f6;
+        --text-muted: #8892b0;
+        --accent: #64ffda;
+        --font-mono: "Courier New", Courier, monospace;
+        --font-sans: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        --nav-height: 80px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background-color: var(--bg-dark);
+        color: var(--text-main);
+        font-family: var(--font-sans);
+        line-height: 1.6;
+        overflow-x: hidden; /* Prevent horizontal scroll from animations */
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+        transition: 0.3s;
+      }
+      ul {
+        list-style: none;
+      }
+
+      /* --- LAYOUT UTILITIES --- */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 25px; /* Increased side padding for mobile safety */
+      }
+
+      section {
+        padding: 100px 0;
+      }
+
+      .section-title {
+        font-size: clamp(1.5rem, 5vw, 2rem); /* Responsive font size */
+        color: var(--text-main);
+        margin-bottom: 40px;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+      }
+
+      .section-title::after {
+        content: "";
+        display: block;
+        width: 100%; /* Flexible width */
+        max-width: 300px;
+        height: 1px;
+        background: var(--text-muted);
+        margin-left: 20px;
+        opacity: 0.3;
+      }
+
+      .highlight {
+        color: var(--accent);
+      }
+
+      /* --- NAVIGATION --- */
+      header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: rgba(10, 25, 47, 0.95);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        height: var(--nav-height);
+        box-shadow: 0 10px 30px -10px rgba(2, 12, 27, 0.7);
+      }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 100%;
+      }
+
+      .logo {
+        font-family: var(--font-mono);
+        color: var(--accent);
+        font-weight: bold;
+        font-size: 1.5rem;
+        z-index: 1001;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 30px;
+        align-items: center;
+      }
+
+      .nav-links a {
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+      }
+
+      .nav-links a:hover {
+        color: var(--accent);
+      }
+
+      .btn {
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        padding: 0.75rem 1.25rem;
+        border-radius: 4px;
+        font-family: var(--font-mono);
+        cursor: pointer;
+        display: inline-block;
+        transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+      }
+
+      .btn:hover {
+        background: rgba(100, 255, 218, 0.1);
+        transform: translateY(-2px);
+      }
+
+      /* Hamburger Menu (Hidden on Desktop) */
+      .menu-btn {
+        display: none;
+        cursor: pointer;
+        z-index: 1001;
+        color: var(--accent);
+        font-size: 1.8rem;
+      }
+
+      /* --- HERO SECTION --- */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: var(--nav-height); /* Offset fixed header */
+      }
+
+      .hero h1 {
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: clamp(0.9rem, 3vw, 1.1rem);
+        margin-bottom: 20px;
+      }
+
+      .hero h2 {
+        font-size: clamp(2.5rem, 8vw, 5rem); /* Clamp for smooth scaling */
+        line-height: 1.1;
+        font-weight: 800;
+        margin-bottom: 10px;
+      }
+
+      .hero h3 {
+        font-size: clamp(2rem, 6vw, 4rem);
+        color: var(--text-muted);
+        margin-bottom: 20px;
+        line-height: 1.1;
+      }
+
+      .hero p {
+        max-width: 540px;
+        color: var(--text-muted);
+        margin-bottom: 50px;
+        font-size: 1.1rem;
+      }
+
+      /* --- FEATURED PROJECTS (WEB & MOBILE) --- */
+      .project-card {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr; /* Image takes more space */
+        gap: 50px;
+        margin-bottom: 100px;
+        align-items: center;
+      }
+
+      .project-image {
+        background-color: var(--bg-card);
+        border-radius: 8px;
+        height: 350px; /* Fixed height for consistency */
+        position: relative;
+        overflow: hidden;
+        border: 1px solid #233554;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+      }
+
+      .project-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+      }
+
+      .project-image:hover img {
+        transform: scale(1.03);
+      }
+
+      /* Zig-Zag Layout Logic for Desktop */
+      .project-card:nth-child(even) {
+        direction: rtl; /* Swaps columns visually */
+      }
+      .project-card:nth-child(even) .project-content {
+        direction: ltr; /* Resets text direction */
+        text-align: left; /* Keeps text aligned left */
+      }
+      /* Optional: Align text right for the 'odd' cards on desktop for style */
+      .project-card:nth-child(odd) .project-content {
+        text-align: right;
+      }
+      .project-card:nth-child(odd) .project-tech,
+      .project-card:nth-child(odd) .project-links {
+        justify-content: flex-end;
+      }
+      /* End Zig-Zag */
+
+      .project-content {
+        position: relative;
+        z-index: 2;
+      }
+
+      .project-content h4 {
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+      }
+
+      .project-content h3 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+      }
+
+      .project-desc {
+        background-color: var(--bg-card);
+        padding: 25px;
+        border-radius: 4px;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px -15px rgba(2, 12, 27, 0.7);
+        width: 110%; /* Makes box overlap image slightly on desktop */
+      }
+
+      .project-card:nth-child(even) .project-desc {
+        margin-left: -10%; /* Pull box left for even items */
+      }
+      .project-card:nth-child(odd) .project-desc {
+        margin-left: -10%; /* Pull box left (visual trick since it's aligned right) - actually on odd we usually want right overlap */
+        margin-right: 0;
+        align-self: flex-end;
+        width: 110%;
+        right: 10%; /* overlap adjustment */
+        position: relative;
+      }
+
+      .project-tech {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        flex-wrap: wrap; /* Allows tags to wrap on small screens */
+      }
+
+      .project-links a {
+        margin: 0 10px;
+        font-size: 1.3rem;
+      }
+      .project-links a:hover {
+        color: var(--accent);
+        transform: translateY(-3px);
+        display: inline-block;
+      }
+
+      /* --- ARCHIVE / GITHUB GRID --- */
+      .archive-grid {
+        display: grid;
+        /* Changed minmax to 280px for better mobile support */
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 15px;
+      }
+
+      #about {
+        padding-top: 100px; /* Overrides the default section padding for just this one */
+      }
+
+      #contact {
+        padding-top: 80px; /* Overrides the default section padding for just this one */
+      }
+
+      .archive-card {
+        background-color: var(--bg-card);
+        padding: 30px;
+        border-radius: 4px;
+        transition: transform 0.2s;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+        cursor: default;
+      }
+
+      .archive-card:hover {
+        transform: translateY(-7px);
+      }
+
+      .card-top {
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .folder-icon {
+        color: var(--accent);
+        font-size: 2.5rem;
+      }
+
+      .archive-card h3 {
+        font-size: 1.4rem;
+        margin-bottom: 10px;
+        cursor: pointer;
+      }
+      .archive-card h3:hover {
+        color: var(--accent);
+      }
+
+      .archive-card p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+      }
+
+      .archive-tech {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      /* --- ABOUT & SKILLS --- */
+      .about-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 50px;
+      }
+
+      .skills-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 20px;
+        font-family: var(--font-mono);
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* --- CONTACT --- */
+      .contact-section {
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto;
+        padding-bottom: 150px;
+      }
+
+      .contact-section h2 {
+        font-size: clamp(2.5rem, 5vw, 3.5rem);
+        margin-bottom: 20px;
+      }
+      .contact-section p {
+        color: var(--text-muted);
+        margin-bottom: 40px;
+      }
+
+      /* --- FOOTER --- */
+      footer {
+        text-align: center;
+        padding: 20px;
+        color: var(--text-muted);
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        background-color: var(--bg-dark);
+      }
+
+      /* --- MODAL STYLES --- */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+      }
+
+      .modal-content {
+        background-color: var(--bg-card);
+        margin: 20vh auto;
+        padding: 40px;
+        border: 1px solid var(--accent);
+        border-radius: 8px;
+        width: 90%;
+        max-width: 450px;
+        text-align: center;
+        box-shadow: 0 0 20px rgba(100, 255, 218, 0.2);
+        position: relative;
+        animation: animatetop 0.4s;
+      }
+
+      @keyframes animatetop {
+        from {
+          top: -50px;
+          opacity: 0;
+        }
+        to {
+          top: 0;
+          opacity: 1;
+        }
+      }
+
+      .close-modal {
+        color: var(--text-muted);
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .close-modal:hover {
+        color: var(--accent);
+      }
+
+      /* ========================================= */
+      /* MOBILE RESPONSIVENESS         */
+      /* ========================================= */
+
+      @media (max-width: 768px) {
+        /* 1. Reset Section Padding */
+        section {
+          padding: 60px 0;
+        }
+
+        /* 2. Navigation - Slide in menu */
+        .menu-btn {
+          display: block; /* Show hamburger */
+        }
+
+        .nav-links {
+          position: fixed;
+          top: 0;
+          right: 0;
+          height: 100vh;
+          width: 70%;
+          max-width: 300px;
+          background-color: var(--bg-card);
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          transform: translateX(100%); /* Hide off-screen */
+          transition: transform 0.3s ease-in-out;
+          box-shadow: -10px 0px 30px -15px rgba(2, 12, 27, 0.7);
+          z-index: 1000;
+        }
+
+        .nav-links.active {
+          transform: translateX(0); /* Slide in */
+        }
+
+        /* 3. Hero Adjustments */
+        .hero {
+          align-items: flex-start;
+          text-align: left;
+        }
+
+        /* 4. Project Card - Stack Vertical */
+        .project-card {
+          grid-template-columns: 1fr; /* Single column */
+          gap: 30px;
+        }
+
+        /* Reset Zig-Zag for Mobile */
+        .project-card:nth-child(even),
+        .project-card:nth-child(odd) {
+          direction: ltr; /* Always left-to-right */
+        }
+
+        .project-content,
+        .project-card:nth-child(even) .project-content,
+        .project-card:nth-child(odd) .project-content {
+          text-align: left; /* Always left aligned text */
+          padding: 0;
+        }
+
+        .project-tech,
+        .project-card:nth-child(odd) .project-tech {
+          justify-content: flex-start; /* Align tags left */
+        }
+
+        .project-links,
+        .project-card:nth-child(odd) .project-links {
+          justify-content: flex-start; /* Align links left */
+        }
+
+        .project-desc,
+        .project-card:nth-child(even) .project-desc,
+        .project-card:nth-child(odd) .project-desc {
+          width: 100%;
+          margin: 0 0 20px 0;
+          right: 0;
+          padding: 20px;
+        }
+
+        .project-image {
+          height: 250px; /* Smaller image on mobile */
+        }
+
+        /* 5. About Section */
+        .about-content {
+          display: block; /* Stack text */
+        }
+      }
+
+      @media (max-width: 480px) {
+        /* Extra small devices */
+        .hero h2 {
+          font-size: 2.5rem; /* Force smaller if clamp is too aggressive */
+        }
+        .archive-grid {
+          grid-template-columns: 1fr; /* 1 card per row */
+        }
+      }
+    </style>
+    <!-- FontAwesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
   </head>
   <body>
-    <div id="root">we are just getting started!</div>
+    <!-- NAV -->
+    <header>
+      <div class="container">
+        <nav>
+          <div class="logo">LJD.</div>
+
+          <!-- Hamburger Icon -->
+          <div class="menu-btn" id="menuBtn">
+            <i class="fas fa-bars"></i>
+          </div>
+
+          <ul class="nav-links" id="navLinks">
+            <li><a href="#about" class="nav-item">About</a></li>
+            <li><a href="#work" class="nav-item">Work</a></li>
+            <li><a href="#projects" class="nav-item">Code</a></li>
+            <li><a href="#contact" class="btn nav-item">Resume</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero container">
+      <div data-aos="fade-up">
+        <h1>Hi, my name is</h1>
+        <h2>Lucky Jeagun Daniel.</h2>
+        <h3>I build things for the web and mobile.</h3>
+        <p>
+          I am a software developer specializing in building (and occasionally
+          designing) exceptional digital experiences. Currently, I'm focused on
+          building accessible, human-centered products.
+        </p>
+        <a href="#work" class="btn">Check out my work</a>
+      </div>
+    </section>
+
+    <!-- FEATURED WORK -->
+    <section id="work" class="container">
+      <h2 class="section-title">
+        <span class="highlight">01.</span> Featured Projects
+      </h2>
+
+      <!-- PROJECT 1 -->
+      <div class="project-card">
+        <div class="project-image">
+          <img
+            src="/images/website.png"
+            onerror="this.style.display='none'; this.parentElement.innerText='[Web App Preview]'"
+            alt="Web App Screenshot"
+          />
+        </div>
+        <div class="project-content">
+          <h4>Featured Web App</h4>
+          <h3>AI Meeting Wizard</h3>
+          <div class="project-desc">
+            An AI-powered meeting assistant that transcribes discussions,
+            generates role-based summaries, and tracks action items. Features
+            automated and manual email reminders with in-email status updates,
+            all built on a modern full-stack web architecture.
+          </div>
+
+          <ul class="project-tech">
+            <li>JavaScript</li>
+            <li>FastAPI</li>
+            <li>Firebase</li>
+            <li>Render</li>
+          </ul>
+          <div class="project-links">
+            <a
+              href="https://github.com/newdawnera/onevoice"
+              target="_blank"
+              aria-label="GitHub"
+              ><i class="fab fa-github"></i
+            ></a>
+            <a
+              href="https://ally-vimd.onrender.com"
+              target="_blank"
+              aria-label="Live Demo"
+              ><i class="fas fa-external-link-alt"></i
+            ></a>
+            <a
+              href="https://youtu.be/Rg_SUi5Ru7I?si=mE9wJuwIdLdaSgKO"
+              style="color: #ff0000"
+              aria-label="YouTube"
+              ><i class="fab fa-youtube"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECT 2 -->
+      <div class="project-card">
+        <div class="project-content">
+          <h4>Featured Mobile App</h4>
+          <h3>Intelligent Cooking Assistant</h3>
+          <div class="project-desc">
+            A smart mobile cooking assistant built with React Native and Expo.
+            Features voice, image, and text input for recipe search,
+            personalized suggestions powered by AssemblyAI and Groq AI, and
+            integration with Firebase and Spoonacular APIs.
+          </div>
+
+          <ul class="project-tech">
+            <li>React Native</li>
+            <li>Firebase</li>
+            <li>Expo</li>
+            <li>Groq AI</li>
+            <li>AsssemblyAI</li>
+          </ul>
+          <div class="project-links">
+            <a
+              href="https://github.com/newdawnera/MyChef"
+              target="_blank"
+              aria-label="GitHub"
+              ><i class="fab fa-github"></i
+            ></a>
+            <a href="#" id="appStoreLink" aria-label="App Store"
+              ><i class="fab fa-app-store"></i
+            ></a>
+            <a
+              href="https://youtu.be/Rg_SUi5Ru7I?si=mE9wJuwIdLdaSgKO"
+              style="color: #ff0000"
+              aria-label="YouTube"
+              ><i class="fab fa-youtube"></i
+            ></a>
+          </div>
+        </div>
+        <div class="project-image">
+          <!-- Placeholder for visual -->
+          <img
+            src="/images/mychef.png"
+            onerror="this.style.display='none'; this.parentElement.innerText='[Mobile App Preview]'"
+            alt="Mobile App Screenshot"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- OTHER PROJECTS -->
+    <section id="projects" class="container">
+      <h2 class="section-title">
+        <span class="highlight">02.</span> Other Projects
+      </h2>
+      <div class="archive-grid">
+        <!-- Card 1 -->
+        <div class="archive-card">
+          <div class="card-top">
+            <i class="far fa-folder folder-icon"></i>
+            <a
+              href="https://github.com/TheCuraTeam/CURAFLUX-SERVER"
+              target="_blank"
+              aria-label="GitHub"
+              ><i class="fab fa-github"></i
+            ></a>
+          </div>
+          <h3>Choralfux</h3>
+          <p>
+            Backend and database management for a healthcare staffing platform
+            bridging hospitals and locums .
+          </p>
+          <div class="archive-tech">
+            <span>Express</span>
+            <span>Node.Js</span>
+            <span>SQL</span>
+            <span>Postman</span>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="archive-card">
+          <div class="card-top">
+            <i class="far fa-folder folder-icon"></i>
+            <a
+              href="https://github.com/newdawnera/MoodVie"
+              target="_blank"
+              aria-label="GitHub"
+              ><i class="fab fa-github"></i
+            ></a>
+          </div>
+          <h3>MoodVie</h3>
+          <p>
+            AI-powered movie recommendation platform integrating emotion-based
+            prompts with ML models.
+          </p>
+          <div class="archive-tech">
+            <span>JavaScript</span>
+            <span>TailwindCSS</span>
+            <span>Gemini AI</span>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="archive-card">
+          <div class="card-top">
+            <i class="far fa-folder folder-icon"></i>
+            <a
+              href="https://github.com/newdawnera/elite-career"
+              target="_blank"
+              aria-label="GitHub"
+              ><i class="fab fa-github"></i
+            ></a>
+          </div>
+          <h3>Elite Career</h3>
+          <p>
+            A Career platform using AI to analyzes and scores CVs with respect
+            to standards and in comparison with job requirement, and give
+            suggestions to users.
+          </p>
+          <div class="archive-tech">
+            <span>JavaScript</span>
+            <span>Tailwind</span>
+            <span>Gemini AI</span>
+            <span>MongoDB</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="container">
+      <h2 class="section-title"><span class="highlight">03.</span> About Me</h2>
+      <div class="about-content">
+        <div>
+          <p style="color: var(--text-muted); margin-bottom: 20px">
+            Hi, I’m Daniel — a software engineer passionate about building
+            efficient, user-centred digital experiences. I enjoy turning ideas
+            into real products through clean design, thoughtful architecture,
+            and reliable code.
+          </p>
+          <p style="color: var(--text-muted); margin-bottom: 20px">
+            My journey into development started with experimenting on small
+            personal projects, and it quickly grew into a broader interest in
+            full-stack engineering and problem-solving. Today, I focus on
+            creating modern web applications and exploring how AI can enhance
+            productivity, automation, and user experiences.
+          </p>
+          <p style="color: var(--text-muted); margin-bottom: 20px">
+            I’m always learning, experimenting, and building — whether it’s a
+            full-stack app, an AI-powered tool, or a feature that helps make
+            technology more accessible and intuitive.
+          </p>
+          <p style="color: var(--text-main)">
+            Here are a few technologies I've been working with recently:
+          </p>
+          <ul class="skills-list">
+            <li><span class="highlight">▹</span> JavaScript (ES6+)</li>
+            <li><span class="highlight">▹</span> React</li>
+            <li><span class="highlight">▹</span> Node.js</li>
+            <li><span class="highlight">▹</span> Python</li>
+            <li><span class="highlight">▹</span> React Native</li>
+            <li><span class="highlight">▹</span> SQL</li>
+            <li><span class="highlight">▹</span> NoSQL (MongoDB, Firestore)</li>
+            <li><span class="highlight">▹</span> Firebase</li>
+            <li><span class="highlight">▹</span> REST APIs</li>
+            <li><span class="highlight">▹</span> AI/ML APIs & tools</li>
+          </ul>
+        </div>
+        <!-- Optional: Place for a profile picture -->
+        <!-- <div><img src="..." /></div> -->
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="container contact-section">
+      <p class="highlight" style="font-family: var(--font-mono)">
+        04. What's Next?
+      </p>
+      <h2>Get In Touch</h2>
+      <p>
+        I’m currently looking for new opportunities. Whether you have a question
+        or just want to say hi, my inbox is always open.
+      </p>
+      <a
+        href="mailto:jeagundaniel@gmail.com"
+        class="btn"
+        style="padding: 20px 30px; font-size: 1.1rem"
+        >Say Hello</a
+      >
+    </section>
+
+    <footer>
+      <p>Designed & Built by Daniel</p>
+    </footer>
+
+    <!-- MODAL -->
+    <div id="apkModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3
+          style="
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-family: var(--font-mono);
+          "
+        >
+          Notice
+        </h3>
+        <p class="modal-text">
+          Not on App Store yet. Contact developer for a direct installable APK
+          link.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // 1. Mobile Menu Toggle Logic
+      const menuBtn = document.getElementById("menuBtn");
+      const navLinks = document.getElementById("navLinks");
+      const navItems = document.querySelectorAll(".nav-item");
+      const menuIcon = menuBtn.querySelector("i");
+
+      function toggleMenu() {
+        navLinks.classList.toggle("active");
+        // Toggle icon between bars and times (X)
+        if (navLinks.classList.contains("active")) {
+          menuIcon.classList.remove("fa-bars");
+          menuIcon.classList.add("fa-times");
+        } else {
+          menuIcon.classList.remove("fa-times");
+          menuIcon.classList.add("fa-bars");
+        }
+      }
+
+      menuBtn.addEventListener("click", toggleMenu);
+
+      // Close menu when a link is clicked
+      navItems.forEach((item) => {
+        item.addEventListener("click", () => {
+          if (navLinks.classList.contains("active")) {
+            toggleMenu();
+          }
+        });
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener("click", (e) => {
+        if (
+          !navLinks.contains(e.target) &&
+          !menuBtn.contains(e.target) &&
+          navLinks.classList.contains("active")
+        ) {
+          toggleMenu();
+        }
+      });
+
+      // 2. Smooth Scrolling (for safari support mainly, though html css handles most)
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          if (this.id === "appStoreLink") return;
+          e.preventDefault();
+          const targetId = this.getAttribute("href");
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: "smooth",
+            });
+          }
+        });
+      });
+
+      // 3. Modal Logic
+      const modal = document.getElementById("apkModal");
+      const btn = document.getElementById("appStoreLink");
+      const span = document.getElementsByClassName("close-modal")[0];
+
+      if (btn) {
+        btn.onclick = function (event) {
+          event.preventDefault();
+          modal.style.display = "block";
+        };
+      }
+
+      span.onclick = function () {
+        modal.style.display = "none";
+      };
+
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      };
+    </script>
   </body>
 </html>

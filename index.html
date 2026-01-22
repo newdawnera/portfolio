@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -615,7 +615,10 @@
         <div class="project-image">
           <img
             src="/images/website.png"
-            onerror="this.style.display='none'; this.parentElement.innerText='[Web App Preview]'"
+            onerror="
+              this.style.display = 'none';
+              this.parentElement.innerText = '[Web App Preview]';
+            "
             alt="Web App Screenshot"
           />
         </div>
@@ -699,9 +702,60 @@
           <!-- Placeholder for visual -->
           <img
             src="/images/mychef.png"
-            onerror="this.style.display='none'; this.parentElement.innerText='[Mobile App Preview]'"
+            onerror="
+              this.style.display = 'none';
+              this.parentElement.innerText = '[Mobile App Preview]';
+            "
             alt="Mobile App Screenshot"
           />
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-image">
+          <!-- Replace this src with a screenshot of your new dashboard -->
+          <img
+            src="/images/dashboard1.png"
+            onerror="
+              this.style.display = 'none';
+              this.parentElement.innerText = '[Dashboard Preview]';
+            "
+            alt="Retail Banking Dashboard Screenshot"
+          />
+        </div>
+        <div class="project-content">
+          <h4>Financial Analytics & AI</h4>
+          <h3>Retail Banking Risk Dashboard</h3>
+          <div class="project-desc">
+            A professional-grade React dashboard visualizing simulated credit
+            risk and revenue data. Features a real-time
+            <strong>AI Analyst</strong> (powered by Groq/Llama 3.3) that reads
+            live chart metrics to generate strategic executive insights, all
+            wrapped in a responsive, bank-grade interface.
+          </div>
+
+          <ul class="project-tech">
+            <li>React + Vite</li>
+            <li>Tailwind CSS</li>
+            <li>Recharts</li>
+            <li>Groq AI (Llama 3.3)</li>
+          </ul>
+          <div class="project-links">
+            <!-- Update with your actual GitHub link -->
+            <a
+              href="https://github.com/newdawnera/datasite/tree/main/jpm-dashboard"
+              target="_blank"
+              aria-label="GitHub"
+              ><i class="fab fa-github"></i
+            ></a>
+            <!-- Update with your actual Render link -->
+            <a
+              href="https://datasite-gk7v.onrender.com/"
+              target="_blank"
+              aria-label="Live Demo"
+              ><i class="fas fa-external-link-alt"></i
+            ></a>
+          </div>
         </div>
       </div>
     </section>

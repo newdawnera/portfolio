@@ -114,6 +114,52 @@ nav {
   color: var(--accent);
 }
 
+.nav-links .featured-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--bg-dark);
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 0 18px rgba(100, 255, 218, 0.18);
+}
+
+.nav-links .featured-nav-link:hover {
+  background: rgba(100, 255, 218, 0.1);
+  color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(100, 255, 218, 0.18);
+}
+
+.nav-links .featured-nav-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.nav-badge {
+  padding: 0.22rem 0.35rem;
+  border-radius: 999px;
+  background: var(--bg-dark);
+  color: var(--accent);
+  font-size: 0.58rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.featured-nav-link:hover .nav-badge {
+  background: var(--accent);
+  color: var(--bg-dark);
+}
+
+.featured-nav-link .fa-external-link-alt {
+  font-size: 0.7rem;
+}
+
 .btn {
   border: 1px solid var(--accent);
   color: var(--accent);
